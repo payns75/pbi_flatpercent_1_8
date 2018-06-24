@@ -1,0 +1,54 @@
+{
+    "sellers" : [
+        {
+            "id": "0",
+            "roleid": "0",
+            "name": "Tom",
+            "resultprct": "45" 
+        },
+        {
+            "id": "1",
+            "roleid": "1",
+            "name": "Olivia",
+            "resultprct": "65"
+        },
+        {
+            "id": "2",
+            "roleid": "1",
+            "name": "James",
+            "resultprct": "88" 
+        },
+        {
+            "id": "3",
+            "roleid": "2",
+            "name": "Lucas",
+            "resultprct": "45" 
+        },
+        {
+            "id": "4",
+            "roleid": "2",
+            "name": "Nancy",
+            "resultprct": "87" 
+        },
+        {
+            "id": "5",
+            "roleid": "2",
+            "name": "Ethan",
+            "resultprct": "12" 
+        }
+    ],
+    "roles" : [
+        {
+            "id": 0,
+            "name": "Manager"
+        },
+        {
+            "id": 1,
+            "name": "Senior"
+        },
+        {
+            "id": 2,
+            "name": "Junior"
+        }
+    ]
+}
