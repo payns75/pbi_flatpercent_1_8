@@ -5,14 +5,14 @@
     "guid": "pb180E482A11328DB4F39A2539D267E04FC61",
     "visualClassName": "Visual",
     "version": "1.0.0",
-    "description": "",
-    "supportUrl": "",
-    "gitHubUrl": ""
+    "description": "A visual PBI custom control to show and animate a percent value",
+    "supportUrl": "https://github.com/payns75/pbi_flatpercent_1_8",
+    "gitHubUrl": "https://github.com/payns75/pbi_flatpercent_1_8"
   },
   "apiVersion": "1.8.0",
   "author": {
-    "name": "",
-    "email": ""
+    "name": "Rémy Jacquemin",
+    "email": "rjacquemin75@gmail.com"
   },
   "assets": {
     "icon": "assets/icon.png"

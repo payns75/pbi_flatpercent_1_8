@@ -25,21 +25,23 @@
 - Nettoyage code / réorganisation
 - Multilingue, Fichier des libellés text / Internationalization (i18n)
 - Ajout d'une icone de contrôle
-- Revoir le fichier de configuration pbiviz.json à configurer correctement ?
-- Publier sur le store -> quid de la licence / propriétaire
+- Revoir le fichier de configuration package.json à configurer correctement (licence nmp start etc)
+- Publier sur le store -> quid de la licence / propriétaire / maintenance
 - Ajout d'une bulle d'aide de description à coté du titre, commentaire en dessous du contrôle ?
 - Arrondi supperieur ou inferieur ou au okus, et décimals ? -> à configurer ?
 - Définir les descriptions des propriétés.
 - Définir les noms des priorités pour la localization
 - Si une seule mesure de VOR sélectionnée, sélectionner la valide pour la non valide, ne pas activer le VOR des mesures?
-- Utiliser la palette des couleurs pour définir des valeurs par défaut
+- Utiliser la palette des couleurs pour définir des valeurs par défaut -> Récupérer les couleurs des mesures sélectionnées.
+- AJouter le fichier de licence
+- Sur githhub, le fichier readme doit décrire le projet, mettre les bug dans issues et la todo liste dans pull request
 
 # Idées pour plus tard
 - Titre custom & style du titre + font Fira, option titre au dessus ou en dessous -> limite sur une seule ligne -> Saisie du titre dans les options ?
 - Option de décalage des animations si plusieurs contrôles ?
 - Police text roboto  ? --> Utiiliser des fonts externes ? Les inclures dans le package.
 - Mettre le suffixe % plus petit que la valeur ?
-- Ne plus utiliser d3js pour desquestions de perf -> Chercher à minimiser et n'utiliser que les librairies utiles -> utiliser au moins la V4 de d3js -> Compatible 1.8?
+- Ne plus utiliser d3js pour desquestions de perf -> Chercher à minimiser et n'utiliser que les librairies utiles -> utiliser au moins la V4|V5 de d3js -> Compatible 1.8?
 - Regarder l'utilisation des canvas
 - Utilisation des thèmes personalisés https://docs.microsoft.com/fr-fr/power-bi/desktop-report-themes
 
