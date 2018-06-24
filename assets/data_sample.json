@@ -40,15 +40,21 @@
     "roles" : [
         {
             "id": 0,
-            "name": "Manager"
+            "name": "Manager",
+            "first_taret": 25,
+            "second_taret": 50
         },
         {
             "id": 1,
-            "name": "Senior"
+            "name": "Senior",
+            "first_taret": 60,
+            "second_taret": 75
         },
         {
             "id": 2,
-            "name": "Junior"
+            "name": "Junior",
+            "first_taret": 40,
+            "second_taret": 60
         }
     ]
 }

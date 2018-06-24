@@ -24,6 +24,7 @@
 # TODOS
 - Nettoyage code / réorganisation
 - Multilingue, Fichier des libellés text / Internationalization (i18n)
+- Problème de comportement si aucun ou plusieurs dimensions sélectionnés, ne fait pas la somme mais prend la première valeur.
 - Ajout d'une icone de contrôle
 - Revoir le fichier de configuration package.json à configurer correctement (licence nmp start etc)
 - Publier sur le store -> quid de la licence / propriétaire / maintenance
