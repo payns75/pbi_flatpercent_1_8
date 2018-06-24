@@ -1,0 +1,8 @@
+{
+    "locale": "fr-FR",
+    "values": {
+        "pie_title_name": "Formes",
+        "descriptionKey": "Options de rendu des formes",
+        "InsideValue_DefaultColor": "Couleur par défaut"
+    }
+}

@@ -1,0 +1,344 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Measure Data",
+            "name": "measure",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "Low Measure",
+            "name": "measurevorlow",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "Middle Measure",
+            "name": "measurevormiddle",
+            "kind": "Measure"
+        }
+    ],
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "measure": {
+                        "min": 1,
+                        "max": 1
+                    },
+                    "measurevorlow": {
+                        "max": 1
+                    },
+                    "measurevormiddle": {
+                        "max": 1
+                    }
+                }
+            ],
+            "categorical": {
+                "values": {
+                    "select": [
+                        {
+                            "bind": {
+                                "to": "measure"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "measurevorlow"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "measurevormiddle"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "objects": {
+        "pie": {
+            "displayName": "Shapes",
+            "description": "Shapes rendering options",
+            "displayNameKey": "pie_title_name",
+            "descriptionKey": "pie_title_description",
+            "properties": {
+                "show": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "defaultColor": {
+                    "displayName": "Default color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "emptyColor": {
+                    "displayName": "Empty color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "arcSize": {
+                    "displayName": "Size",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "insideValue": {
+            "displayName": "Inside Value",
+            "properties": {
+                "show": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "defaultColor": {
+                    "displayName": "Default Color",
+                    "displayNameKey": "InsideValue_DefaultColor",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontFamily": {
+                    "displayName": "Font family",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Default",
+                                "description": "helvetica, arial, sans-serif",
+                                "value": "helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Arial",
+                                "value": "Arial"
+                            },
+                            {
+                                "displayName": "Arial Black",
+                                "value": "\"Arial Black\""
+                            },
+                            {
+                                "displayName": "Arial Unicode MS",
+                                "value": "\"Arial Unicode MS\""
+                            },
+                            {
+                                "displayName": "Calibri",
+                                "value": "Calibri"
+                            },
+                            {
+                                "displayName": "Cambria",
+                                "value": "Cambria"
+                            },
+                            {
+                                "displayName": "Cambria Math",
+                                "value": "\"Cambria Math\""
+                            },
+                            {
+                                "displayName": "Candara",
+                                "value": "Candara"
+                            },
+                            {
+                                "displayName": "Comic Sans MS",
+                                "value": "\"Comic Sans MS\""
+                            },
+                            {
+                                "displayName": "Consolas",
+                                "value": "Consolas"
+                            },
+                            {
+                                "displayName": "Constantia",
+                                "value": "Constantia"
+                            },
+                            {
+                                "displayName": "Corbel",
+                                "value": "Corbel"
+                            },
+                            {
+                                "displayName": "Courier New",
+                                "value": "\"Courier New\""
+                            },
+                            {
+                                "displayName": "Georgia",
+                                "value": "Georgia"
+                            },
+                            {
+                                "displayName": "Lucida Sans Unicode",
+                                "value": "\"Lucida Sans Unicode\""
+                            },
+                            {
+                                "displayName": "Segoe (Bold)",
+                                "value": "\"Segoe UI Bold\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI",
+                                "value": "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI Light",
+                                "value": "\"Segoe UI Light\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Symbol",
+                                "value": "Symbol"
+                            },
+                            {
+                                "displayName": "Tahoma",
+                                "value": "Tahoma"
+                            },
+                            {
+                                "displayName": "Times New Roman",
+                                "value": "\"Times New Roman\""
+                            },
+                            {
+                                "displayName": "Trebuchet MS",
+                                "value": "\"Trebuchet MS\""
+                            },
+                            {
+                                "displayName": "Verdana",
+                                "value": "Verdana"
+                            },
+                            {
+                                "displayName": "Wingdings",
+                                "value": "Wingdings"
+                            }
+                        ]
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Text Size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "multiplier": {
+                    "displayName": "Multiplier",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "nanText": {
+                    "displayName": "NAN Text",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "suffix": {
+                    "displayName": "Suffixe",
+                    "type": {
+                        "text": true
+                    }
+                }
+            }
+        },
+        "animation": {
+            "displayName": "Animation",
+            "properties": {
+                "show": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "duration": {
+                    "displayName": "Duration(ms)",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "vor": {
+            "displayName": "VOR",
+            "properties": {
+                "show": {
+                    "displayName": "VOR Property Switch",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "lowColor": {
+                    "displayName": "Low Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "middleColor": {
+                    "displayName": "Middle Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "highColor": {
+                    "displayName": "High Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "onPie": {
+                    "displayName": "On Pie",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "onValue": {
+                    "displayName": "On Value",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "fixedValues": {
+                    "displayName": "Fixed Values",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "firstValue": {
+                    "displayName": "Low Value",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "secondValue": {
+                    "displayName": "Middle Value",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "multiplier": {
+                    "displayName": "Measure Multiplier",
+                    "type": {
+                        "bool": true
+                    }
+                }
+            }
+        }
+    },
+    "suppressDefaultTitle": false
+}

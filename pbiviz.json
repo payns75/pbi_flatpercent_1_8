@@ -1,0 +1,30 @@
+{
+  "visual": {
+    "name": "pb180",
+    "displayName": "pb_1_8_0",
+    "guid": "pb180E482A11328DB4F39A2539D267E04FC61",
+    "visualClassName": "Visual",
+    "version": "1.0.0",
+    "description": "",
+    "supportUrl": "",
+    "gitHubUrl": ""
+  },
+  "apiVersion": "1.8.0",
+  "author": {
+    "name": "",
+    "email": ""
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "externalJS": [
+    "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js",
+    "node_modules/d3/d3.min.js"
+  ],
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json",
+  "dependencies": "dependencies.json",
+  "stringResources": [
+    "stringResources/fr-FR.json"
+  ]
+}
