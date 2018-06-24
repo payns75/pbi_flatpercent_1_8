@@ -32,6 +32,7 @@
 - Définir les descriptions des propriétés.
 - Définir les noms des priorités pour la localization
 - Si une seule mesure de VOR sélectionnée, sélectionner la valide pour la non valide, ne pas activer le VOR des mesures?
+- Utiliser la palette des couleurs pour définir des valeurs par défaut
 
 # Idées pour plus tard
 - Titre custom & style du titre + font Fira, option titre au dessus ou en dessous -> limite sur une seule ligne -> Saisie du titre dans les options ?

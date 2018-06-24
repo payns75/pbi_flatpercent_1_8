@@ -824,8 +824,8 @@ var powerbi;
     (function (visuals) {
         var plugins;
         (function (plugins) {
-            plugins.pb180E482A11328DB4F39A2539D267E04FC61_DEBUG = {
-                name: 'pb180E482A11328DB4F39A2539D267E04FC61_DEBUG',
+            plugins.pb180E482A11328DB4F39A2539D267E04FC61 = {
+                name: 'pb180E482A11328DB4F39A2539D267E04FC61',
                 displayName: 'pb_1_8_0',
                 class: 'Visual',
                 version: '1.0.0',
