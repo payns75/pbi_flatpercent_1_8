@@ -6,12 +6,12 @@
             "kind": "Measure"
         },
         {
-            "displayName": "Low Measure",
+            "displayName": "First Target",
             "name": "measurevorlow",
             "kind": "Measure"
         },
         {
-            "displayName": "Middle Measure",
+            "displayName": "Second Target",
             "name": "measurevormiddle",
             "kind": "Measure"
         }
@@ -320,13 +320,13 @@
                     }
                 },
                 "firstValue": {
-                    "displayName": "Low Value",
+                    "displayName": "First Target",
                     "type": {
                         "numeric": true
                     }
                 },
                 "secondValue": {
-                    "displayName": "Middle Value",
+                    "displayName": "Second Target",
                     "type": {
                         "numeric": true
                     }

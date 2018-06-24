@@ -33,10 +33,12 @@
 - Définir les descriptions des propriétés.
 - Définir les noms des priorités pour la localization
 - Si une seule mesure de VOR sélectionnée, sélectionner la valide pour la non valide, ne pas activer le VOR des mesures?
-- Utiliser la palette des couleurs pour définir des valeurs par défaut -> Récupérer les couleurs des mesures sélectionnées.
+- Utiliser la palette des couleurs pour définir des valeurs par défaut -> Récupérer les couleurs des dimensions sélectionnées.
 - AJouter le fichier de licence
 - Sur githhub, le fichier readme doit décrire le projet, mettre les bug dans issues et la todo liste dans pull request
 - Gestion des version api à automatiser (1.8, 1.11, 1.12) via gulp? -> Création de plusieurs branches sur github.
+- Tester 'pbiviz update 1.2.0' --> en upgrade et downgrade
+- Inside value désactivé ne fonctionne plus
 
 # Idées pour plus tard
 - Titre custom & style du titre + font Fira, option titre au dessus ou en dessous -> limite sur une seule ligne -> Saisie du titre dans les options ?
