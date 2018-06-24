@@ -562,7 +562,7 @@ var powerbi;
                         this.show = true;
                         this.defaultColor = "#E91E63";
                         this.emptyColor = "#fff";
-                        this.arcSize = 4;
+                        this.arcSize = 3;
                     }
                     return PieSettings;
                 }());
@@ -748,22 +748,21 @@ var powerbi;
                                 .remove();
                         }
                         this.previousvalue = value;
-                        if (settings.insideValue.show) {
-                            var textcolor = settings.insideValue.defaultColor;
-                            if (isvalidvalue && settings.vor.onValue) {
-                                textcolor = this.getVorColor(options.dataViews[0].categorical, settings, value);
-                            }
-                            var textValue = isvalidvalue ? "" + value + settings.insideValue.suffix : settings.insideValue.nanText;
-                            this.text.data([textValue])
-                                .style('font-family', settings.insideValue.fontFamily)
-                                .style('font-size', settings.insideValue.fontSize + "vmin")
-                                .attr("y", init.gHeight / 2)
-                                .attr("x", init.gWidth / 2)
-                                .style('fill', textcolor)
-                                .text(function (d) {
-                                return d;
-                            });
+                        var textcolor = settings.insideValue.defaultColor;
+                        if (isvalidvalue && settings.vor.onValue) {
+                            textcolor = this.getVorColor(options.dataViews[0].categorical, settings, value);
                         }
+                        var textValue = isvalidvalue ? "" + value + settings.insideValue.suffix : settings.insideValue.nanText;
+                        textValue = settings.insideValue.show ? textValue : '';
+                        this.text.data([textValue])
+                            .style('font-family', settings.insideValue.fontFamily)
+                            .style('font-size', settings.insideValue.fontSize + "vmin")
+                            .attr("y", init.gHeight / 2)
+                            .attr("x", init.gWidth / 2)
+                            .style('fill', textcolor)
+                            .text(function (d) {
+                            return d;
+                        });
                     };
                     FlatPercent.prototype.isvalidvalue = function (value) {
                         if (value === 0) {
@@ -824,8 +823,8 @@ var powerbi;
     (function (visuals) {
         var plugins;
         (function (plugins) {
-            plugins.pb180E482A11328DB4F39A2539D267E04FC61 = {
-                name: 'pb180E482A11328DB4F39A2539D267E04FC61',
+            plugins.pb180E482A11328DB4F39A2539D267E04FC61_DEBUG = {
+                name: 'pb180E482A11328DB4F39A2539D267E04FC61_DEBUG',
                 displayName: 'pb_1_8_0',
                 class: 'Visual',
                 version: '1.0.0',

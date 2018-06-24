@@ -1,6 +1,6 @@
 module powerbi.visuals.plugins {
-    export var pb180E482A11328DB4F39A2539D267E04FC61 = {
-        name: 'pb180E482A11328DB4F39A2539D267E04FC61',
+    export var pb180E482A11328DB4F39A2539D267E04FC61_DEBUG = {
+        name: 'pb180E482A11328DB4F39A2539D267E04FC61_DEBUG',
         displayName: 'pb_1_8_0',
         class: 'Visual',
         version: '1.0.0',

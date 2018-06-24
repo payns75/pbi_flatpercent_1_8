@@ -80,25 +80,24 @@ module powerbi.extensibility.visual {
 
             this.previousvalue = value;
 
-            if (settings.insideValue.show) {
-                let textcolor = settings.insideValue.defaultColor;
+            let textcolor = settings.insideValue.defaultColor;
 
-                if (isvalidvalue && settings.vor.onValue) {
-                    textcolor = this.getVorColor(options.dataViews[0].categorical, settings, value);
-                }
-
-                let textValue = isvalidvalue ? `${value}${settings.insideValue.suffix}` : settings.insideValue.nanText;
-
-                this.text.data([textValue])
-                    .style('font-family', settings.insideValue.fontFamily)
-                    .style('font-size', `${settings.insideValue.fontSize}vmin`)
-                    .attr("y", init.gHeight / 2)
-                    .attr("x", init.gWidth / 2)
-                    .style('fill', textcolor)
-                    .text(d => {
-                        return d;
-                    });
+            if (isvalidvalue && settings.vor.onValue) {
+                textcolor = this.getVorColor(options.dataViews[0].categorical, settings, value);
             }
+
+            let textValue = isvalidvalue ? `${value}${settings.insideValue.suffix}` : settings.insideValue.nanText;
+            textValue = settings.insideValue.show ? textValue : '';
+
+            this.text.data([textValue])
+                .style('font-family', settings.insideValue.fontFamily)
+                .style('font-size', `${settings.insideValue.fontSize}vmin`)
+                .attr("y", init.gHeight / 2)
+                .attr("x", init.gWidth / 2)
+                .style('fill', textcolor)
+                .text(d => {
+                    return d;
+                });
         }
 
         private isvalidvalue(value: number): boolean {

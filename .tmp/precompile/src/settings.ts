@@ -27,7 +27,7 @@ module powerbi.extensibility.visual.pb180E482A11328DB4F39A2539D267E04FC61  {
     public show: boolean = true;
     public defaultColor: string = "#E91E63";
     public emptyColor: string = "#fff";
-    public arcSize: number = 4;
+    public arcSize: number = 3;
   }
 
   export class InsideValueSettings {
