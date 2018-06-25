@@ -11,6 +11,8 @@
 - Ajout d'une bulle d'aide de description à coté du titre, commentaire en dessous du contrôle ?
 - Arrondi supperieur ou inferieur ou au plus près, et nb décimals ? -> à configurer ?
 - Si une seule mesure de VOR sélectionnée, sélectionner la valide pour la non valide, ne pas activer le VOR des mesures si riend de sélectionné ?
+- Vérifier que si pas d'unité configuré, il n'affiche rien (%)
+- Mettre par défaut la fonction de somme.
 - Utiliser la palette des couleurs pour définir des valeurs par défaut -> Récupérer les couleurs des dimensions sélectionnées.
     - https://github.com/Microsoft/powerbi-visuals-utils-colorutils/blob/master/docs/api/colorHelper.md
 
