@@ -19,8 +19,7 @@ module powerbi.extensibility.visual {
                 .data([''])
                 .enter()
                 .append('text')
-                .attr('text-anchor', 'middle')
-                .attr('alignment-baseline', 'middle');
+                .attr('text-anchor', 'middle');
         }
 
         public Update(options: VisualUpdateOptions, settings: VisualSettings, value: number) {
@@ -42,6 +41,10 @@ module powerbi.extensibility.visual {
                     .outerRadius(radius)
                     .innerRadius(radius * (100 - settings.pie.arcSize) / 100);
 
+                const arc2 = d3.svg.arc()
+                    .outerRadius(radius-settings.pie.arcSize)
+                    .innerRadius((radius-settings.pie.arcSize) * (100 - settings.pie.arcSize) / 100);
+
                 let values = [value > 100 ? 100 : value];
 
                 if (value < 100) {
@@ -54,10 +57,15 @@ module powerbi.extensibility.visual {
                     .data(this.pie(values));
 
                 const pieColor = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.defaultColor;
+                const pieColor2 = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.secondcolor;
 
                 const path = dpath
                     .enter().append('path')
                     .attr('fill', (d, i) => i ? settings.pie.emptyColor : pieColor);
+
+                const path2 = dpath
+                    .enter().append('path')
+                    .attr('fill', (d, i) => i ? settings.pie.emptyColor : pieColor2);
 
                 if (value !== this.previousvalue && settings.animation.show) {
                     path.transition().delay((d, i) => i * settings.animation.duration).duration(settings.animation.duration)
@@ -69,8 +77,18 @@ module powerbi.extensibility.visual {
                             };
                         });
 
+                        path2.transition().delay((d, i) => i * settings.animation.duration).duration(settings.animation.duration)
+                        .attrTween('d', (d) => {
+                            const i = d3.interpolate(d.startAngle + 0.1, d.endAngle);
+                            return (t) => {
+                                d.endAngle = i(t);
+                                return arc2(<any>d);
+                            };
+                        });
+
                 } else {
                     path.attr("d", <any>arc);
+                    path2.attr("d", <any>arc2);
                 }
 
                 dpath.exit()
@@ -94,6 +112,7 @@ module powerbi.extensibility.visual {
                 .style('font-size', `${settings.insideValue.fontSize}vmin`)
                 .attr("y", init.gHeight / 2)
                 .attr("x", init.gWidth / 2)
+                .attr("dy", "0.5ex")
                 .style('fill', textcolor)
                 .text(d => {
                     return d;

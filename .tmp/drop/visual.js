@@ -561,6 +561,7 @@ var powerbi;
                     function PieSettings() {
                         this.show = true;
                         this.defaultColor = "#E91E63";
+                        this.secondcolor = "#E91E63";
                         this.emptyColor = "#fff";
                         this.arcSize = 3;
                     }
@@ -703,8 +704,7 @@ var powerbi;
                             .data([''])
                             .enter()
                             .append('text')
-                            .attr('text-anchor', 'middle')
-                            .attr('alignment-baseline', 'middle');
+                            .attr('text-anchor', 'middle');
                     }
                     FlatPercent.prototype.Update = function (options, settings, value) {
                         var init = this.initContainer(options, settings);
@@ -719,6 +719,9 @@ var powerbi;
                             var arc_1 = d3.svg.arc()
                                 .outerRadius(radius)
                                 .innerRadius(radius * (100 - settings.pie.arcSize) / 100);
+                            var arc2_1 = d3.svg.arc()
+                                .outerRadius(radius - settings.pie.arcSize)
+                                .innerRadius((radius - settings.pie.arcSize) * (100 - settings.pie.arcSize) / 100);
                             var values = [value > 100 ? 100 : value];
                             if (value < 100) {
                                 values.push(100 - value);
@@ -728,9 +731,13 @@ var powerbi;
                                 .selectAll('path')
                                 .data(this.pie(values));
                             var pieColor_1 = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.defaultColor;
+                            var pieColor2_1 = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.secondcolor;
                             var path = dpath
                                 .enter().append('path')
                                 .attr('fill', function (d, i) { return i ? settings.pie.emptyColor : pieColor_1; });
+                            var path2 = dpath
+                                .enter().append('path')
+                                .attr('fill', function (d, i) { return i ? settings.pie.emptyColor : pieColor2_1; });
                             if (value !== this.previousvalue && settings.animation.show) {
                                 path.transition().delay(function (d, i) { return i * settings.animation.duration; }).duration(settings.animation.duration)
                                     .attrTween('d', function (d) {
@@ -740,9 +747,18 @@ var powerbi;
                                         return arc_1(d);
                                     };
                                 });
+                                path2.transition().delay(function (d, i) { return i * settings.animation.duration; }).duration(settings.animation.duration)
+                                    .attrTween('d', function (d) {
+                                    var i = d3.interpolate(d.startAngle + 0.1, d.endAngle);
+                                    return function (t) {
+                                        d.endAngle = i(t);
+                                        return arc2_1(d);
+                                    };
+                                });
                             }
                             else {
                                 path.attr("d", arc_1);
+                                path2.attr("d", arc2_1);
                             }
                             dpath.exit()
                                 .remove();
@@ -759,6 +775,7 @@ var powerbi;
                             .style('font-size', settings.insideValue.fontSize + "vmin")
                             .attr("y", init.gHeight / 2)
                             .attr("x", init.gWidth / 2)
+                            .attr("dy", "0.5ex")
                             .style('fill', textcolor)
                             .text(function (d) {
                             return d;
@@ -823,8 +840,8 @@ var powerbi;
     (function (visuals) {
         var plugins;
         (function (plugins) {
-            plugins.pb180E482A11328DB4F39A2539D267E04FC61_DEBUG = {
-                name: 'pb180E482A11328DB4F39A2539D267E04FC61_DEBUG',
+            plugins.pb180E482A11328DB4F39A2539D267E04FC61 = {
+                name: 'pb180E482A11328DB4F39A2539D267E04FC61',
                 displayName: 'pb_1_8_0',
                 class: 'Visual',
                 version: '1.0.0',

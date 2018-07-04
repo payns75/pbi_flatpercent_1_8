@@ -26,6 +26,7 @@ module powerbi.extensibility.visual {
   export class PieSettings {
     public show: boolean = true;
     public defaultColor: string = "#E91E63";
+    public secondcolor: string = "#E91E63";
     public emptyColor: string = "#fff";
     public arcSize: number = 3;
   }

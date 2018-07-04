@@ -77,6 +77,16 @@
                         }
                     }
                 },
+                "secondcolor": {
+                    "displayName": "Second color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
                 "emptyColor": {
                     "displayName": "Empty color",
                     "type": {
