@@ -98,7 +98,7 @@
                     }
                 },
                 "secondEmptyColor": {
-                    "displayName": "Empty color",
+                    "displayName": "Second Empty color",
                     "type": {
                         "fill": {
                             "solid": {
