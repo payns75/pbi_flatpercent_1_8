@@ -696,25 +696,52 @@ var powerbi;
                         this.margin = margin;
                         this.pie = d3.layout.pie().sort(null);
                         this.previousvalue = null;
+                        this.previousangle = 0;
                         if (!this.margin) {
                             this.margin = new pb180E482A11328DB4F39A2539D267E04FC61.Margin();
                         }
+                        var backcontainer = this.gcontainer
+                            .append('g')
+                            .attr('class', 'backcontainer');
+                        this.pathback = backcontainer
+                            .selectAll('.backcontainer')
+                            .data([100])
+                            .enter()
+                            .append('path');
+                        this.pathback2 = backcontainer
+                            .selectAll('.backcontainer')
+                            .data([100])
+                            .enter()
+                            .append('path');
                         this.arcContainer = this.gcontainer.append('g').attr('class', 'arccontainer');
-                        var textContainer = this.gcontainer.append('g').attr('class', 'textcontainer');
-                        this.text = textContainer.selectAll('.textcontainer')
+                        this.dpath = this.arcContainer
+                            .append('g')
+                            .selectAll('path')
+                            .data(this.pie([0]));
+                        this.path = this.dpath
+                            .enter()
+                            .append('path');
+                        this.path2 = this.dpath
+                            .enter()
+                            .append('path');
+                        var textContainer = this.gcontainer
+                            .append('g')
+                            .attr('class', 'textcontainer');
+                        this.text = textContainer
+                            .selectAll('.textcontainer')
                             .data([''])
                             .enter()
                             .append('text')
                             .attr('text-anchor', 'middle');
                     }
                     FlatPercent.prototype.Update = function (options, settings, value) {
+                        var _this = this;
                         var init = this.initContainer(options, settings);
                         if (settings.insideValue.multiplier) {
                             value *= 100;
                         }
                         value = this.formatValue(settings, value);
                         var isvalidvalue = this.isvalidvalue(value);
-                        this.arcContainer.selectAll('path').remove();
                         if (isvalidvalue && value > 0 && settings.pie.show) {
                             var radius = Math.min(init.gWidth, init.gHeight) / 2;
                             var arc_1 = d3.svg.arc()
@@ -727,30 +754,39 @@ var powerbi;
                             if (value < 100) {
                                 values.push(100 - value);
                             }
-                            var dpath = this.arcContainer
+                            this.pathback.data(this.pie([100]))
                                 .attr('transform', "translate(" + init.gWidth / 2 + "," + init.gHeight / 2 + ")")
-                                .selectAll('path')
+                                .attr('fill', settings.pie.emptyColor)
+                                .attr("d", arc_1);
+                            this.pathback2.data(this.pie([100]))
+                                .attr('transform', "translate(" + init.gWidth / 2 + "," + init.gHeight / 2 + ")")
+                                .attr('fill', settings.pie.secondEmptyColor)
+                                .attr("d", arc2_1);
+                            var pieColor = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.defaultColor;
+                            var pieColor2 = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.secondcolor;
+                            this.path.data(this.pie(values))
+                                .attr('transform', "translate(" + init.gWidth / 2 + "," + init.gHeight / 2 + ")")
+                                .attr('fill', pieColor);
+                            this.path2
+                                .attr('transform', "translate(" + init.gWidth / 2 + "," + init.gHeight / 2 + ")")
+                                .attr('fill', pieColor2)
                                 .data(this.pie(values));
-                            var pieColor_1 = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.defaultColor;
-                            var pieColor2_1 = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.secondcolor;
-                            var path = dpath
-                                .enter().append('path')
-                                .attr('fill', function (d, i) { return i ? settings.pie.emptyColor : pieColor_1; });
-                            var path2 = dpath
-                                .enter().append('path')
-                                .attr('fill', function (d, i) { return i ? settings.pie.secondEmptyColor : pieColor2_1; });
                             if (value !== this.previousvalue && settings.animation.show) {
-                                path.transition().delay(function (d, i) { return i * settings.animation.duration; }).duration(settings.animation.duration)
+                                // Nouvelle version d3 réutiliser https://github.com/d3/d3-transition
+                                this.path.transition()
+                                    .duration(settings.animation.duration)
                                     .attrTween('d', function (d) {
-                                    var i = d3.interpolate(d.startAngle + 0.1, d.endAngle);
+                                    var i = d3.interpolate(_this.previousangle, d.endAngle);
                                     return function (t) {
                                         d.endAngle = i(t);
+                                        _this.previousangle = d.endAngle;
                                         return arc_1(d);
                                     };
                                 });
-                                path2.transition().delay(function (d, i) { return i * settings.animation.duration; }).duration(settings.animation.duration)
+                                this.path2.transition()
+                                    .duration(settings.animation.duration)
                                     .attrTween('d', function (d) {
-                                    var i = d3.interpolate(d.startAngle + 0.1, d.endAngle);
+                                    var i = d3.interpolate(_this.previousangle, d.endAngle);
                                     return function (t) {
                                         d.endAngle = i(t);
                                         return arc2_1(d);
@@ -758,11 +794,9 @@ var powerbi;
                                 });
                             }
                             else {
-                                path.attr("d", arc_1);
-                                path2.attr("d", arc2_1);
+                                this.path.attr("d", arc_1);
+                                this.path2.attr("d", arc2_1);
                             }
-                            dpath.exit()
-                                .remove();
                         }
                         this.previousvalue = value;
                         var textcolor = settings.insideValue.defaultColor;
@@ -816,7 +850,7 @@ var powerbi;
                     };
                     FlatPercent.prototype.formatValue = function (settings, value) {
                         // TODO: Format value by settings.
-                        return Math.ceil(value);
+                        return Math.round(value);
                     };
                     FlatPercent.prototype.initContainer = function (options, settings) {
                         var gHeight = options.viewport.height - this.margin.top - this.margin.bottom;

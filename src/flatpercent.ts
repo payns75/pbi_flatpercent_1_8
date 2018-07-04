@@ -4,18 +4,57 @@ module powerbi.extensibility.visual {
     export class FlatPercent {
         private arcContainer: d3.Selection<SVGElement>;
         private pie = d3.layout.pie().sort(null);
+        private dpath: d3.selection.Update<d3.layout.pie.Arc<number>>;
+        private path: d3.Selection<d3.layout.pie.Arc<number>>;
+        private pathback: d3.Selection<number>;
+        private pathback2: d3.Selection<number>;
+        private path2: d3.Selection<d3.layout.pie.Arc<number>>;
         private text: d3.Selection<string>;
         private previousvalue: number = null;
+        private previousangle = 0;
 
         constructor(private gcontainer: d3.Selection<SVGElement>, public margin: Margin = null) {
             if (!this.margin) {
                 this.margin = new Margin();
             }
 
+            const backcontainer = this.gcontainer
+                .append('g')
+                .attr('class', 'backcontainer');
+
+            this.pathback = backcontainer
+                .selectAll('.backcontainer')
+                .data([100])
+                .enter()
+                .append('path');
+
+            this.pathback2 = backcontainer
+                .selectAll('.backcontainer')
+                .data([100])
+                .enter()
+                .append('path');
+
             this.arcContainer = this.gcontainer.append('g').attr('class', 'arccontainer');
 
-            const textContainer = this.gcontainer.append('g').attr('class', 'textcontainer');
-            this.text = textContainer.selectAll('.textcontainer')
+            this.dpath = this.arcContainer
+                .append('g')
+                .selectAll('path')
+                .data(this.pie([0]));
+
+            this.path = this.dpath
+                .enter()
+                .append('path');
+
+            this.path2 = this.dpath
+                .enter()
+                .append('path');
+
+            const textContainer = this.gcontainer
+                .append('g')
+                .attr('class', 'textcontainer');
+
+            this.text = textContainer
+                .selectAll('.textcontainer')
                 .data([''])
                 .enter()
                 .append('text')
@@ -33,8 +72,6 @@ module powerbi.extensibility.visual {
 
             let isvalidvalue = this.isvalidvalue(value);
 
-            this.arcContainer.selectAll('path').remove();
-
             if (isvalidvalue && value > 0 && settings.pie.show) {
                 const radius = Math.min(init.gWidth, init.gHeight) / 2;
                 const arc = d3.svg.arc()
@@ -42,8 +79,8 @@ module powerbi.extensibility.visual {
                     .innerRadius(radius - settings.pie.arcSize);
 
                 const arc2 = d3.svg.arc()
-                    .outerRadius(radius-settings.pie.arcSize)
-                    .innerRadius(radius-settings.pie.arcSize * 2);
+                    .outerRadius(radius - settings.pie.arcSize)
+                    .innerRadius(radius - settings.pie.arcSize * 2);
 
                 let values = [value > 100 ? 100 : value];
 
@@ -51,53 +88,60 @@ module powerbi.extensibility.visual {
                     values.push(100 - value);
                 }
 
-                const dpath = this.arcContainer
+                this.pathback.data(this.pie([100]))
                     .attr('transform', `translate(${init.gWidth / 2},${init.gHeight / 2})`)
-                    .selectAll('path')
-                    .data(this.pie(values));
+                    .attr('fill', settings.pie.emptyColor)
+                    .attr("d", <any>arc);
+
+                this.pathback2.data(this.pie([100]))
+                    .attr('transform', `translate(${init.gWidth / 2},${init.gHeight / 2})`)
+                    .attr('fill', settings.pie.secondEmptyColor)
+                    .attr("d", <any>arc2);
 
                 const pieColor = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.defaultColor;
                 const pieColor2 = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.secondcolor;
 
-                const path = dpath
-                    .enter().append('path')
-                    .attr('fill', (d, i) => i ? settings.pie.emptyColor : pieColor);
+                this.path.data(this.pie(values))
+                    .attr('transform', `translate(${init.gWidth / 2},${init.gHeight / 2})`)
+                    .attr('fill', pieColor);
 
-                const path2 = dpath
-                    .enter().append('path')
-                    .attr('fill', (d, i) => i ? settings.pie.secondEmptyColor : pieColor2);
+                this.path2
+                    .attr('transform', `translate(${init.gWidth / 2},${init.gHeight / 2})`)
+                    .attr('fill', pieColor2)
+                    .data(this.pie(values));
 
                 if (value !== this.previousvalue && settings.animation.show) {
-                    path.transition().delay((d, i) => i * settings.animation.duration).duration(settings.animation.duration)
+                    // Nouvelle version d3 réutiliser https://github.com/d3/d3-transition
+
+                    this.path.transition()
+                        .duration(settings.animation.duration)
                         .attrTween('d', (d) => {
-                            const i = d3.interpolate(d.startAngle + 0.1, d.endAngle);
+                            const i = d3.interpolate(this.previousangle, d.endAngle);
+
                             return (t) => {
                                 d.endAngle = i(t);
+                                this.previousangle = d.endAngle;
                                 return arc(<any>d);
                             };
                         });
 
-                        path2.transition().delay((d, i) => i * settings.animation.duration).duration(settings.animation.duration)
+                    this.path2.transition()
+                        .duration(settings.animation.duration)
                         .attrTween('d', (d) => {
-                            const i = d3.interpolate(d.startAngle + 0.1, d.endAngle);
+                            const i = d3.interpolate(this.previousangle, d.endAngle);
+
                             return (t) => {
                                 d.endAngle = i(t);
                                 return arc2(<any>d);
                             };
                         });
-
                 } else {
-                    path.attr("d", <any>arc);
-                    path2.attr("d", <any>arc2);
+                    this.path.attr("d", <any>arc);
+                    this.path2.attr("d", <any>arc2);
                 }
-
-                dpath.exit()
-                    .remove();
             }
 
-
             this.previousvalue = value;
-
             let textcolor = settings.insideValue.defaultColor;
 
             if (isvalidvalue && settings.vor.onValue) {
@@ -160,7 +204,7 @@ module powerbi.extensibility.visual {
 
         private formatValue(settings: VisualSettings, value: number) {
             // TODO: Format value by settings.
-            return Math.ceil(value);
+            return Math.round(value);
         }
 
         private initContainer(options: VisualUpdateOptions, settings: VisualSettings): any {
