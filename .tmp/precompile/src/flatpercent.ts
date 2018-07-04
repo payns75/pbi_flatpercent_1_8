@@ -39,11 +39,11 @@ module powerbi.extensibility.visual.pb180E482A11328DB4F39A2539D267E04FC61  {
                 const radius = Math.min(init.gWidth, init.gHeight) / 2;
                 const arc = d3.svg.arc()
                     .outerRadius(radius)
-                    .innerRadius(radius * (100 - settings.pie.arcSize) / 100);
+                    .innerRadius(radius - settings.pie.arcSize);
 
                 const arc2 = d3.svg.arc()
                     .outerRadius(radius-settings.pie.arcSize)
-                    .innerRadius((radius-settings.pie.arcSize) * (100 - settings.pie.arcSize) / 100);
+                    .innerRadius(radius-settings.pie.arcSize * 2);
 
                 let values = [value > 100 ? 100 : value];
 
@@ -65,7 +65,7 @@ module powerbi.extensibility.visual.pb180E482A11328DB4F39A2539D267E04FC61  {
 
                 const path2 = dpath
                     .enter().append('path')
-                    .attr('fill', (d, i) => i ? settings.pie.emptyColor : pieColor2);
+                    .attr('fill', (d, i) => i ? settings.pie.secondEmptyColor : pieColor2);
 
                 if (value !== this.previousvalue && settings.animation.show) {
                     path.transition().delay((d, i) => i * settings.animation.duration).duration(settings.animation.duration)

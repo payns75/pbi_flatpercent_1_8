@@ -28,6 +28,7 @@ module powerbi.extensibility.visual.pb180E482A11328DB4F39A2539D267E04FC61  {
     public defaultColor: string = "#E91E63";
     public secondcolor: string = "#E91E63";
     public emptyColor: string = "#fff";
+    public secondEmptyColor: string = "#fff";
     public arcSize: number = 3;
   }
 

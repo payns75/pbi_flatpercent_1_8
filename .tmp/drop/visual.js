@@ -563,6 +563,7 @@ var powerbi;
                         this.defaultColor = "#E91E63";
                         this.secondcolor = "#E91E63";
                         this.emptyColor = "#fff";
+                        this.secondEmptyColor = "#fff";
                         this.arcSize = 3;
                     }
                     return PieSettings;
@@ -718,10 +719,10 @@ var powerbi;
                             var radius = Math.min(init.gWidth, init.gHeight) / 2;
                             var arc_1 = d3.svg.arc()
                                 .outerRadius(radius)
-                                .innerRadius(radius * (100 - settings.pie.arcSize) / 100);
+                                .innerRadius(radius - settings.pie.arcSize);
                             var arc2_1 = d3.svg.arc()
                                 .outerRadius(radius - settings.pie.arcSize)
-                                .innerRadius((radius - settings.pie.arcSize) * (100 - settings.pie.arcSize) / 100);
+                                .innerRadius(radius - settings.pie.arcSize * 2);
                             var values = [value > 100 ? 100 : value];
                             if (value < 100) {
                                 values.push(100 - value);
@@ -737,7 +738,7 @@ var powerbi;
                                 .attr('fill', function (d, i) { return i ? settings.pie.emptyColor : pieColor_1; });
                             var path2 = dpath
                                 .enter().append('path')
-                                .attr('fill', function (d, i) { return i ? settings.pie.emptyColor : pieColor2_1; });
+                                .attr('fill', function (d, i) { return i ? settings.pie.secondEmptyColor : pieColor2_1; });
                             if (value !== this.previousvalue && settings.animation.show) {
                                 path.transition().delay(function (d, i) { return i * settings.animation.duration; }).duration(settings.animation.duration)
                                     .attrTween('d', function (d) {

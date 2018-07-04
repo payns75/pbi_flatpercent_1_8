@@ -97,6 +97,16 @@
                         }
                     }
                 },
+                "secondEmptyColor": {
+                    "displayName": "Empty color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
                 "arcSize": {
                     "displayName": "Size",
                     "type": {
