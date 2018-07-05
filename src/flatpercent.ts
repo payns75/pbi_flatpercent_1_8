@@ -2,7 +2,6 @@ module powerbi.extensibility.visual {
     "use strict";
 
     export class FlatPercent {
-        private arcContainer: d3.Selection<SVGElement>;
         private pie = d3.layout.pie().sort(null);
         private dpath: d3.selection.Update<d3.layout.pie.Arc<number>>;
         private path: d3.Selection<d3.layout.pie.Arc<number>>;
@@ -18,25 +17,21 @@ module powerbi.extensibility.visual {
                 this.margin = new Margin();
             }
 
-            const backcontainer = this.gcontainer
+            this.pathback = this.gcontainer
                 .append('g')
-                .attr('class', 'backcontainer');
-
-            this.pathback = backcontainer
-                .selectAll('.backcontainer')
+                .selectAll('path')
                 .data([100])
                 .enter()
                 .append('path');
 
-            this.pathback2 = backcontainer
-                .selectAll('.backcontainer')
+            this.pathback2 = this.gcontainer
+                .append('g')
+                .selectAll('path')
                 .data([100])
                 .enter()
                 .append('path');
 
-            this.arcContainer = this.gcontainer.append('g').attr('class', 'arccontainer');
-
-            this.dpath = this.arcContainer
+            this.dpath = this.gcontainer
                 .append('g')
                 .selectAll('path')
                 .data(this.pie([0]));
@@ -49,31 +44,23 @@ module powerbi.extensibility.visual {
                 .enter()
                 .append('path');
 
-            const textContainer = this.gcontainer
+            this.text = this.gcontainer
                 .append('g')
-                .attr('class', 'textcontainer');
-
-            this.text = textContainer
-                .selectAll('.textcontainer')
+                .selectAll('path')
                 .data([''])
                 .enter()
                 .append('text')
+                .attr("dy", "0.5ex")
                 .attr('text-anchor', 'middle');
         }
 
         public Update(options: VisualUpdateOptions, settings: VisualSettings, value: number) {
-            const init = this.initContainer(options, settings);
-
-            if (settings.insideValue.multiplier) {
-                value *= 100;
-            }
-
+            const radius = this.initContainer(options, settings);
             value = this.formatValue(settings, value);
 
             let isvalidvalue = this.isvalidvalue(value);
 
             if (isvalidvalue && value > 0 && settings.pie.show) {
-                const radius = Math.min(init.gWidth, init.gHeight) / 2;
                 const arc = d3.svg.arc()
                     .outerRadius(radius)
                     .innerRadius(radius - settings.pie.arcSize);
@@ -89,12 +76,10 @@ module powerbi.extensibility.visual {
                 }
 
                 this.pathback.data(this.pie([100]))
-                    .attr('transform', `translate(${init.gWidth / 2},${init.gHeight / 2})`)
                     .attr('fill', settings.pie.emptyColor)
                     .attr("d", <any>arc);
 
                 this.pathback2.data(this.pie([100]))
-                    .attr('transform', `translate(${init.gWidth / 2},${init.gHeight / 2})`)
                     .attr('fill', settings.pie.secondEmptyColor)
                     .attr("d", <any>arc2);
 
@@ -102,39 +87,15 @@ module powerbi.extensibility.visual {
                 const pieColor2 = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.secondcolor;
 
                 this.path.data(this.pie(values))
-                    .attr('transform', `translate(${init.gWidth / 2},${init.gHeight / 2})`)
                     .attr('fill', pieColor);
 
-                this.path2
-                    .attr('transform', `translate(${init.gWidth / 2},${init.gHeight / 2})`)
-                    .attr('fill', pieColor2)
-                    .data(this.pie(values));
+                this.path2.data(this.pie(values))
+                    .attr('fill', pieColor2);
 
                 if (value !== this.previousvalue && settings.animation.show) {
                     // Nouvelle version d3 réutiliser https://github.com/d3/d3-transition
-
-                    this.path.transition()
-                        .duration(settings.animation.duration)
-                        .attrTween('d', (d) => {
-                            const i = d3.interpolate(this.previousangle, d.endAngle);
-
-                            return (t) => {
-                                d.endAngle = i(t);
-                                this.previousangle = d.endAngle;
-                                return arc(<any>d);
-                            };
-                        });
-
-                    this.path2.transition()
-                        .duration(settings.animation.duration)
-                        .attrTween('d', (d) => {
-                            const i = d3.interpolate(this.previousangle, d.endAngle);
-
-                            return (t) => {
-                                d.endAngle = i(t);
-                                return arc2(<any>d);
-                            };
-                        });
+                    this.addTransistion(this.path, arc, settings.animation.duration);
+                    this.addTransistion(this.path2, arc2, settings.animation.duration);
                 } else {
                     this.path.attr("d", <any>arc);
                     this.path2.attr("d", <any>arc2);
@@ -154,9 +115,6 @@ module powerbi.extensibility.visual {
             this.text.data([textValue])
                 .style('font-family', settings.insideValue.fontFamily)
                 .style('font-size', `${settings.insideValue.fontSize}vmin`)
-                .attr("y", init.gHeight / 2)
-                .attr("x", init.gWidth / 2)
-                .attr("dy", "0.5ex")
                 .style('fill', textcolor)
                 .text(d => {
                     return d;
@@ -203,11 +161,15 @@ module powerbi.extensibility.visual {
         }
 
         private formatValue(settings: VisualSettings, value: number) {
+            if (settings.insideValue.multiplier) {
+                value *= 100;
+            }
+
             // TODO: Format value by settings.
             return Math.round(value);
         }
 
-        private initContainer(options: VisualUpdateOptions, settings: VisualSettings): any {
+        private initContainer(options: VisualUpdateOptions, settings: VisualSettings): number {
             const gHeight = options.viewport.height - this.margin.top - this.margin.bottom;
             const gWidth = options.viewport.width - this.margin.right - this.margin.left;
 
@@ -216,10 +178,23 @@ module powerbi.extensibility.visual {
                 width: gWidth
             });
 
-            this.gcontainer.attr('transform',
-                'translate(' + this.margin.left + ',' + this.margin.top + ')');
+            this.gcontainer.attr('transform', `translate(${gWidth / 2}, ${gHeight / 2})`);
 
-            return { gHeight, gWidth };
+            return Math.min(gWidth, gHeight) / 2;
+        }
+
+        private addTransistion(p: d3.Selection<d3.layout.pie.Arc<number>>, a: any, duration: number) {
+            p.transition()
+                .duration(duration)
+                .attrTween('d', (d) => {
+                    const i = d3.interpolate(this.previousangle, d.endAngle);
+
+                    return (t) => {
+                        d.endAngle = i(t);
+                        this.previousangle = d.endAngle;
+                        return a(<any>d);
+                    };
+                });
         }
     }
 }

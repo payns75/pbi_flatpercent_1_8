@@ -700,21 +700,19 @@ var powerbi;
                         if (!this.margin) {
                             this.margin = new pb180E482A11328DB4F39A2539D267E04FC61.Margin();
                         }
-                        var backcontainer = this.gcontainer
+                        this.pathback = this.gcontainer
                             .append('g')
-                            .attr('class', 'backcontainer');
-                        this.pathback = backcontainer
-                            .selectAll('.backcontainer')
+                            .selectAll('path')
                             .data([100])
                             .enter()
                             .append('path');
-                        this.pathback2 = backcontainer
-                            .selectAll('.backcontainer')
+                        this.pathback2 = this.gcontainer
+                            .append('g')
+                            .selectAll('path')
                             .data([100])
                             .enter()
                             .append('path');
-                        this.arcContainer = this.gcontainer.append('g').attr('class', 'arccontainer');
-                        this.dpath = this.arcContainer
+                        this.dpath = this.gcontainer
                             .append('g')
                             .selectAll('path')
                             .data(this.pie([0]));
@@ -724,30 +722,24 @@ var powerbi;
                         this.path2 = this.dpath
                             .enter()
                             .append('path');
-                        var textContainer = this.gcontainer
+                        this.text = this.gcontainer
                             .append('g')
-                            .attr('class', 'textcontainer');
-                        this.text = textContainer
-                            .selectAll('.textcontainer')
+                            .selectAll('path')
                             .data([''])
                             .enter()
                             .append('text')
+                            .attr("dy", "0.5ex")
                             .attr('text-anchor', 'middle');
                     }
                     FlatPercent.prototype.Update = function (options, settings, value) {
-                        var _this = this;
-                        var init = this.initContainer(options, settings);
-                        if (settings.insideValue.multiplier) {
-                            value *= 100;
-                        }
+                        var radius = this.initContainer(options, settings);
                         value = this.formatValue(settings, value);
                         var isvalidvalue = this.isvalidvalue(value);
                         if (isvalidvalue && value > 0 && settings.pie.show) {
-                            var radius = Math.min(init.gWidth, init.gHeight) / 2;
-                            var arc_1 = d3.svg.arc()
+                            var arc = d3.svg.arc()
                                 .outerRadius(radius)
                                 .innerRadius(radius - settings.pie.arcSize);
-                            var arc2_1 = d3.svg.arc()
+                            var arc2 = d3.svg.arc()
                                 .outerRadius(radius - settings.pie.arcSize)
                                 .innerRadius(radius - settings.pie.arcSize * 2);
                             var values = [value > 100 ? 100 : value];
@@ -755,47 +747,25 @@ var powerbi;
                                 values.push(100 - value);
                             }
                             this.pathback.data(this.pie([100]))
-                                .attr('transform', "translate(" + init.gWidth / 2 + "," + init.gHeight / 2 + ")")
                                 .attr('fill', settings.pie.emptyColor)
-                                .attr("d", arc_1);
+                                .attr("d", arc);
                             this.pathback2.data(this.pie([100]))
-                                .attr('transform', "translate(" + init.gWidth / 2 + "," + init.gHeight / 2 + ")")
                                 .attr('fill', settings.pie.secondEmptyColor)
-                                .attr("d", arc2_1);
+                                .attr("d", arc2);
                             var pieColor = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.defaultColor;
                             var pieColor2 = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.secondcolor;
                             this.path.data(this.pie(values))
-                                .attr('transform', "translate(" + init.gWidth / 2 + "," + init.gHeight / 2 + ")")
                                 .attr('fill', pieColor);
-                            this.path2
-                                .attr('transform', "translate(" + init.gWidth / 2 + "," + init.gHeight / 2 + ")")
-                                .attr('fill', pieColor2)
-                                .data(this.pie(values));
+                            this.path2.data(this.pie(values))
+                                .attr('fill', pieColor2);
                             if (value !== this.previousvalue && settings.animation.show) {
                                 // Nouvelle version d3 réutiliser https://github.com/d3/d3-transition
-                                this.path.transition()
-                                    .duration(settings.animation.duration)
-                                    .attrTween('d', function (d) {
-                                    var i = d3.interpolate(_this.previousangle, d.endAngle);
-                                    return function (t) {
-                                        d.endAngle = i(t);
-                                        _this.previousangle = d.endAngle;
-                                        return arc_1(d);
-                                    };
-                                });
-                                this.path2.transition()
-                                    .duration(settings.animation.duration)
-                                    .attrTween('d', function (d) {
-                                    var i = d3.interpolate(_this.previousangle, d.endAngle);
-                                    return function (t) {
-                                        d.endAngle = i(t);
-                                        return arc2_1(d);
-                                    };
-                                });
+                                this.addTransistion(this.path, arc, settings.animation.duration);
+                                this.addTransistion(this.path2, arc2, settings.animation.duration);
                             }
                             else {
-                                this.path.attr("d", arc_1);
-                                this.path2.attr("d", arc2_1);
+                                this.path.attr("d", arc);
+                                this.path2.attr("d", arc2);
                             }
                         }
                         this.previousvalue = value;
@@ -808,9 +778,6 @@ var powerbi;
                         this.text.data([textValue])
                             .style('font-family', settings.insideValue.fontFamily)
                             .style('font-size', settings.insideValue.fontSize + "vmin")
-                            .attr("y", init.gHeight / 2)
-                            .attr("x", init.gWidth / 2)
-                            .attr("dy", "0.5ex")
                             .style('fill', textcolor)
                             .text(function (d) {
                             return d;
@@ -849,6 +816,9 @@ var powerbi;
                         return settings.insideValue.defaultColor;
                     };
                     FlatPercent.prototype.formatValue = function (settings, value) {
+                        if (settings.insideValue.multiplier) {
+                            value *= 100;
+                        }
                         // TODO: Format value by settings.
                         return Math.round(value);
                     };
@@ -859,8 +829,21 @@ var powerbi;
                             height: gHeight,
                             width: gWidth
                         });
-                        this.gcontainer.attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
-                        return { gHeight: gHeight, gWidth: gWidth };
+                        this.gcontainer.attr('transform', "translate(" + gWidth / 2 + ", " + gHeight / 2 + ")");
+                        return Math.min(gWidth, gHeight) / 2;
+                    };
+                    FlatPercent.prototype.addTransistion = function (p, a, duration) {
+                        var _this = this;
+                        p.transition()
+                            .duration(duration)
+                            .attrTween('d', function (d) {
+                            var i = d3.interpolate(_this.previousangle, d.endAngle);
+                            return function (t) {
+                                d.endAngle = i(t);
+                                _this.previousangle = d.endAngle;
+                                return a(d);
+                            };
+                        });
                     };
                     return FlatPercent;
                 }());
