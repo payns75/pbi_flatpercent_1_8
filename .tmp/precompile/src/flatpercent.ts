@@ -46,7 +46,7 @@ module powerbi.extensibility.visual.pb180E482A11328DB4F39A2539D267E04FC61  {
 
             this.text = this.gcontainer
                 .append('g')
-                .selectAll('path')
+                .selectAll('text')
                 .data([''])
                 .enter()
                 .append('text')
@@ -56,18 +56,19 @@ module powerbi.extensibility.visual.pb180E482A11328DB4F39A2539D267E04FC61  {
 
         public Update(options: VisualUpdateOptions, settings: VisualSettings, value: number) {
             const radius = this.initContainer(options, settings);
-            value = this.formatValue(settings, value);
+            const arcsize = radius * settings.pie.arcSize / 100;
 
+            value = this.formatValue(settings, value);
             let isvalidvalue = this.isvalidvalue(value);
 
             if (isvalidvalue && value > 0 && settings.pie.show) {
                 const arc = d3.svg.arc()
                     .outerRadius(radius)
-                    .innerRadius(radius - settings.pie.arcSize);
+                    .innerRadius(radius - arcsize);
 
                 const arc2 = d3.svg.arc()
-                    .outerRadius(radius - settings.pie.arcSize)
-                    .innerRadius(radius - settings.pie.arcSize * 2);
+                    .outerRadius(radius - arcsize)
+                    .innerRadius(radius - arcsize * 2);
 
                 let values = [value > 100 ? 100 : value];
 
@@ -83,8 +84,8 @@ module powerbi.extensibility.visual.pb180E482A11328DB4F39A2539D267E04FC61  {
                     .attr('fill', settings.pie.secondEmptyColor)
                     .attr("d", <any>arc2);
 
-                const pieColor = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.defaultColor;
-                const pieColor2 = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.secondcolor;
+                const pieColor = settings.vor.show && settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.defaultColor;
+                const pieColor2 = settings.vor.show && settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.secondcolor;
 
                 this.path.data(this.pie(values))
                     .attr('fill', pieColor);
@@ -105,7 +106,7 @@ module powerbi.extensibility.visual.pb180E482A11328DB4F39A2539D267E04FC61  {
             this.previousvalue = value;
             let textcolor = settings.insideValue.defaultColor;
 
-            if (isvalidvalue && settings.vor.onValue) {
+            if (isvalidvalue && settings.vor.show && settings.vor.onValue) {
                 textcolor = this.getVorColor(options.dataViews[0].categorical, settings, value);
             }
 
@@ -116,9 +117,7 @@ module powerbi.extensibility.visual.pb180E482A11328DB4F39A2539D267E04FC61  {
                 .style('font-family', settings.insideValue.fontFamily)
                 .style('font-size', `${settings.insideValue.fontSize}vmin`)
                 .style('fill', textcolor)
-                .text(d => {
-                    return d;
-                });
+                .text(d => d);
         }
 
         private isvalidvalue(value: number): boolean {
@@ -133,31 +132,27 @@ module powerbi.extensibility.visual.pb180E482A11328DB4F39A2539D267E04FC61  {
             let measurevorlow = settings.vor.firstValue;
             let measurevormiddle = settings.vor.secondValue;
 
-            if (settings.vor.show) {
-                if (!settings.vor.fixedValues) {
-                    measurevorlow = Visual.getvalue(categorical, "measurevorlow");
-                    measurevormiddle = Visual.getvalue(categorical, "measurevormiddle");
+            if (!settings.vor.fixedValues) {
+                measurevorlow = Visual.getvalue(categorical, "measurevorlow");
+                measurevormiddle = Visual.getvalue(categorical, "measurevormiddle");
 
-                    measurevorlow = settings.vor.multiplier ? measurevorlow * 100 : measurevorlow;
-                    measurevormiddle = settings.vor.multiplier ? measurevormiddle * 100 : measurevormiddle;
+                measurevorlow = settings.vor.multiplier ? measurevorlow * 100 : measurevorlow;
+                measurevormiddle = settings.vor.multiplier ? measurevormiddle * 100 : measurevormiddle;
 
-                    measurevorlow = this.formatValue(settings, measurevorlow);
-                    measurevormiddle = this.formatValue(settings, measurevormiddle);
+                measurevorlow = this.formatValue(settings, measurevorlow);
+                measurevormiddle = this.formatValue(settings, measurevormiddle);
 
-                    settings.vor.firstValue = measurevorlow;
-                    settings.vor.secondValue = measurevormiddle;
-                }
-
-                if (value < measurevorlow) {
-                    return settings.vor.lowColor;
-                } else if (value > measurevorlow && value < measurevormiddle) {
-                    return settings.vor.middleColor;
-                } else {
-                    return settings.vor.highColor;
-                }
+                settings.vor.firstValue = measurevorlow;
+                settings.vor.secondValue = measurevormiddle;
             }
 
-            return settings.insideValue.defaultColor;
+            if (value < measurevorlow) {
+                return settings.vor.lowColor;
+            } else if (value > measurevorlow && value < measurevormiddle) {
+                return settings.vor.middleColor;
+            } else {
+                return settings.vor.highColor;
+            }
         }
 
         private formatValue(settings: VisualSettings, value: number) {
@@ -165,7 +160,7 @@ module powerbi.extensibility.visual.pb180E482A11328DB4F39A2539D267E04FC61  {
                 value *= 100;
             }
 
-            // TODO: Format value by settings.
+            // TODO: Format value by settings ?
             return Math.round(value);
         }
 

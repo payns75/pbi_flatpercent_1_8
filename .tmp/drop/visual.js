@@ -535,6 +535,7 @@ var powerbi;
                         _this.animation = new AnimationSettings();
                         _this.insideValue = new InsideValueSettings();
                         return _this;
+                        // public legend: LegendSetting = new LegendSetting();
                     }
                     return VisualSettings;
                 }(DataViewObjectsParser));
@@ -598,6 +599,16 @@ var powerbi;
                     return VorSettings;
                 }());
                 pb180E482A11328DB4F39A2539D267E04FC61.VorSettings = VorSettings;
+                var LegendSetting = (function () {
+                    function LegendSetting() {
+                        this.show = false;
+                        this.color = "blue";
+                        this.fontFamily = "helvetica, arial, sans-serif";
+                        this.fontSize = 13;
+                    }
+                    return LegendSetting;
+                }());
+                pb180E482A11328DB4F39A2539D267E04FC61.LegendSetting = LegendSetting;
             })(pb180E482A11328DB4F39A2539D267E04FC61 = visual.pb180E482A11328DB4F39A2539D267E04FC61 || (visual.pb180E482A11328DB4F39A2539D267E04FC61 = {}));
         })(visual = extensibility.visual || (extensibility.visual = {}));
     })(extensibility = powerbi.extensibility || (powerbi.extensibility = {}));
@@ -612,10 +623,18 @@ var powerbi;
             (function (pb180E482A11328DB4F39A2539D267E04FC61) {
                 "use strict";
                 var Visual = (function () {
+                    // private legend: d3.Selection<string>;
                     function Visual(options) {
                         this.svg = d3.select(options.element).append('svg');
                         this.gcontainer = this.svg.append('g').classed('percenter', true);
                         this.flatpercent = new pb180E482A11328DB4F39A2539D267E04FC61.FlatPercent(this.gcontainer, { top: 5, right: 1, bottom: 1, left: 1 });
+                        // this.legend = this.svg
+                        //     .append('g')
+                        //     .selectAll('text')
+                        //     .data([''])
+                        //     .enter()
+                        //     .append('text')
+                        //     .attr("dy", "0.5ex");
                     }
                     Visual.prototype.update = function (options) {
                         this.settings = Visual.parseSettings(options && options.dataViews && options.dataViews[0]);
@@ -640,9 +659,14 @@ var powerbi;
                         //     titleanchor = 'end';
                         // }
                         // titlex = options.viewport.width / 2;
+                        // this.legend.data([titletext])
+                        //     .style('font-family', this.settings.legend.fontFamily)
+                        //     .style('font-size', `${this.settings.legend.fontSize}vmin`)
+                        //     .style('fill', this.settings.legend.color)
+                        //     .text(d => d);
                         // this.svg.selectAll('.titlevalue').remove();
-                        // this.svg.append('g').append('text')
-                        //     .style('font-size', '5vw')
+                        // const legend = this.svg.append('g').append('text')
+                        //     .style('font-size', '5vmin')
                         //     .attr("x", titlex)
                         //     .attr("y", 20)
                         //     .attr('text-anchor', titleanchor)
@@ -724,7 +748,7 @@ var powerbi;
                             .append('path');
                         this.text = this.gcontainer
                             .append('g')
-                            .selectAll('path')
+                            .selectAll('text')
                             .data([''])
                             .enter()
                             .append('text')
@@ -733,15 +757,16 @@ var powerbi;
                     }
                     FlatPercent.prototype.Update = function (options, settings, value) {
                         var radius = this.initContainer(options, settings);
+                        var arcsize = radius * settings.pie.arcSize / 100;
                         value = this.formatValue(settings, value);
                         var isvalidvalue = this.isvalidvalue(value);
                         if (isvalidvalue && value > 0 && settings.pie.show) {
                             var arc = d3.svg.arc()
                                 .outerRadius(radius)
-                                .innerRadius(radius - settings.pie.arcSize);
+                                .innerRadius(radius - arcsize);
                             var arc2 = d3.svg.arc()
-                                .outerRadius(radius - settings.pie.arcSize)
-                                .innerRadius(radius - settings.pie.arcSize * 2);
+                                .outerRadius(radius - arcsize)
+                                .innerRadius(radius - arcsize * 2);
                             var values = [value > 100 ? 100 : value];
                             if (value < 100) {
                                 values.push(100 - value);
@@ -752,8 +777,8 @@ var powerbi;
                             this.pathback2.data(this.pie([100]))
                                 .attr('fill', settings.pie.secondEmptyColor)
                                 .attr("d", arc2);
-                            var pieColor = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.defaultColor;
-                            var pieColor2 = settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.secondcolor;
+                            var pieColor = settings.vor.show && settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.defaultColor;
+                            var pieColor2 = settings.vor.show && settings.vor.onPie ? this.getVorColor(options.dataViews[0].categorical, settings, value) : settings.pie.secondcolor;
                             this.path.data(this.pie(values))
                                 .attr('fill', pieColor);
                             this.path2.data(this.pie(values))
@@ -770,7 +795,7 @@ var powerbi;
                         }
                         this.previousvalue = value;
                         var textcolor = settings.insideValue.defaultColor;
-                        if (isvalidvalue && settings.vor.onValue) {
+                        if (isvalidvalue && settings.vor.show && settings.vor.onValue) {
                             textcolor = this.getVorColor(options.dataViews[0].categorical, settings, value);
                         }
                         var textValue = isvalidvalue ? "" + value + settings.insideValue.suffix : settings.insideValue.nanText;
@@ -779,9 +804,7 @@ var powerbi;
                             .style('font-family', settings.insideValue.fontFamily)
                             .style('font-size', settings.insideValue.fontSize + "vmin")
                             .style('fill', textcolor)
-                            .text(function (d) {
-                            return d;
-                        });
+                            .text(function (d) { return d; });
                     };
                     FlatPercent.prototype.isvalidvalue = function (value) {
                         if (value === 0) {
@@ -792,34 +815,31 @@ var powerbi;
                     FlatPercent.prototype.getVorColor = function (categorical, settings, value) {
                         var measurevorlow = settings.vor.firstValue;
                         var measurevormiddle = settings.vor.secondValue;
-                        if (settings.vor.show) {
-                            if (!settings.vor.fixedValues) {
-                                measurevorlow = pb180E482A11328DB4F39A2539D267E04FC61.Visual.getvalue(categorical, "measurevorlow");
-                                measurevormiddle = pb180E482A11328DB4F39A2539D267E04FC61.Visual.getvalue(categorical, "measurevormiddle");
-                                measurevorlow = settings.vor.multiplier ? measurevorlow * 100 : measurevorlow;
-                                measurevormiddle = settings.vor.multiplier ? measurevormiddle * 100 : measurevormiddle;
-                                measurevorlow = this.formatValue(settings, measurevorlow);
-                                measurevormiddle = this.formatValue(settings, measurevormiddle);
-                                settings.vor.firstValue = measurevorlow;
-                                settings.vor.secondValue = measurevormiddle;
-                            }
-                            if (value < measurevorlow) {
-                                return settings.vor.lowColor;
-                            }
-                            else if (value > measurevorlow && value < measurevormiddle) {
-                                return settings.vor.middleColor;
-                            }
-                            else {
-                                return settings.vor.highColor;
-                            }
+                        if (!settings.vor.fixedValues) {
+                            measurevorlow = pb180E482A11328DB4F39A2539D267E04FC61.Visual.getvalue(categorical, "measurevorlow");
+                            measurevormiddle = pb180E482A11328DB4F39A2539D267E04FC61.Visual.getvalue(categorical, "measurevormiddle");
+                            measurevorlow = settings.vor.multiplier ? measurevorlow * 100 : measurevorlow;
+                            measurevormiddle = settings.vor.multiplier ? measurevormiddle * 100 : measurevormiddle;
+                            measurevorlow = this.formatValue(settings, measurevorlow);
+                            measurevormiddle = this.formatValue(settings, measurevormiddle);
+                            settings.vor.firstValue = measurevorlow;
+                            settings.vor.secondValue = measurevormiddle;
                         }
-                        return settings.insideValue.defaultColor;
+                        if (value < measurevorlow) {
+                            return settings.vor.lowColor;
+                        }
+                        else if (value > measurevorlow && value < measurevormiddle) {
+                            return settings.vor.middleColor;
+                        }
+                        else {
+                            return settings.vor.highColor;
+                        }
                     };
                     FlatPercent.prototype.formatValue = function (settings, value) {
                         if (settings.insideValue.multiplier) {
                             value *= 100;
                         }
-                        // TODO: Format value by settings.
+                        // TODO: Format value by settings ?
                         return Math.round(value);
                     };
                     FlatPercent.prototype.initContainer = function (options, settings) {

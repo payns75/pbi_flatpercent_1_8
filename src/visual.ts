@@ -5,11 +5,20 @@ module powerbi.extensibility.visual {
         private svg: d3.Selection<SVGElement>;
         private gcontainer: d3.Selection<SVGElement>;
         private flatpercent: FlatPercent;
+        // private legend: d3.Selection<string>;
 
         constructor(options: VisualConstructorOptions) {
             this.svg = d3.select(options.element).append('svg');
             this.gcontainer = this.svg.append('g').classed('percenter', true);
             this.flatpercent = new FlatPercent(this.gcontainer, { top: 5, right: 1, bottom: 1, left: 1 });
+
+            // this.legend = this.svg
+            //     .append('g')
+            //     .selectAll('text')
+            //     .data([''])
+            //     .enter()
+            //     .append('text')
+            //     .attr("dy", "0.5ex");
         }
 
         public update(options: VisualUpdateOptions) {
@@ -42,15 +51,24 @@ module powerbi.extensibility.visual {
 
             // titlex = options.viewport.width / 2;
 
+            // this.legend.data([titletext])
+            //     .style('font-family', this.settings.legend.fontFamily)
+            //     .style('font-size', `${this.settings.legend.fontSize}vmin`)
+            //     .style('fill', this.settings.legend.color)
+            //     .text(d => d);
+
+
             // this.svg.selectAll('.titlevalue').remove();
-            // this.svg.append('g').append('text')
-            //     .style('font-size', '5vw')
+            // const legend = this.svg.append('g').append('text')
+            //     .style('font-size', '5vmin')
             //     .attr("x", titlex)
             //     .attr("y", 20)
             //     .attr('text-anchor', titleanchor)
             //     .style('fill', 'blue')
             //     .attr('class', 'titlevalue')
             //     .text(titletext);
+
+
         }
 
         public static getvalue(categorical: DataViewCategorical, name: string): number {

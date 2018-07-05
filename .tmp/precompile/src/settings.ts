@@ -7,11 +7,10 @@ module powerbi.extensibility.visual.pb180E482A11328DB4F39A2539D267E04FC61  {
     public vor: VorSettings = new VorSettings();
     public animation: AnimationSettings = new AnimationSettings();
     public insideValue: InsideValueSettings = new InsideValueSettings();
+    // public legend: LegendSetting = new LegendSetting();
   }
 
   export class Margin {
-    constructor() { }
-
     public top: number = 20;
     public right: number = 20;
     public bottom: number = 20;
@@ -53,5 +52,12 @@ module powerbi.extensibility.visual.pb180E482A11328DB4F39A2539D267E04FC61  {
     public firstValue: number = 25;
     public secondValue: number = 75;
     public multiplier: boolean = true;
+  }
+
+  export class LegendSetting {
+    public show: boolean = false;
+    public color: string = "blue";
+    public fontFamily: string = "helvetica, arial, sans-serif";
+    public fontSize: number = 13;
   }
 }
