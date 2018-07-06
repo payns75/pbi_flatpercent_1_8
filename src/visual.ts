@@ -71,11 +71,11 @@ module powerbi.extensibility.visual {
 
         }
 
-        public static getvalue(categorical: DataViewCategorical, name: string): number {
+        public static getvalue(categorical: DataViewCategorical, name: string): any {
             const item = categorical.values.filter(f => f.source.roles[name]).map(m => m.values[0]);
 
             if (item && item.length === 1) {
-                return +item[0];
+                return item[0];
             }
         }
 

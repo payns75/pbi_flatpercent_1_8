@@ -594,7 +594,6 @@ var powerbi;
                         this.fixedValues = true;
                         this.firstValue = 25;
                         this.secondValue = 75;
-                        this.multiplier = true;
                     }
                     return VorSettings;
                 }());
@@ -677,7 +676,7 @@ var powerbi;
                     Visual.getvalue = function (categorical, name) {
                         var item = categorical.values.filter(function (f) { return f.source.roles[name]; }).map(function (m) { return m.values[0]; });
                         if (item && item.length === 1) {
-                            return +item[0];
+                            return item[0];
                         }
                     };
                     /**
@@ -758,14 +757,14 @@ var powerbi;
                     FlatPercent.prototype.Update = function (options, settings, value) {
                         var radius = this.initContainer(options, settings);
                         var arcsize = radius * settings.pie.arcSize / 100;
-                        value = this.formatValue(settings, value);
                         var isvalidvalue = this.isvalidvalue(value);
-                        if (isvalidvalue && value > 0 && settings.pie.show) {
+                        value = this.formatValue(settings, value) | 0;
+                        if (settings.pie.show) {
                             var arc = d3.svg.arc()
                                 .outerRadius(radius)
                                 .innerRadius(radius - arcsize);
                             var arc2 = d3.svg.arc()
-                                .outerRadius(radius - arcsize)
+                                .outerRadius(radius - arcsize + 0.8)
                                 .innerRadius(radius - arcsize * 2);
                             var values = [value > 100 ? 100 : value];
                             if (value < 100) {
@@ -798,7 +797,10 @@ var powerbi;
                         if (isvalidvalue && settings.vor.show && settings.vor.onValue) {
                             textcolor = this.getVorColor(options.dataViews[0].categorical, settings, value);
                         }
-                        var textValue = isvalidvalue ? "" + value + settings.insideValue.suffix : settings.insideValue.nanText;
+                        var textValue = settings.insideValue.nanText;
+                        if (isvalidvalue) {
+                            textValue = "" + value + settings.insideValue.suffix;
+                        }
                         textValue = settings.insideValue.show ? textValue : '';
                         this.text.data([textValue])
                             .style('font-family', settings.insideValue.fontFamily)
@@ -818,8 +820,8 @@ var powerbi;
                         if (!settings.vor.fixedValues) {
                             measurevorlow = pb180E482A11328DB4F39A2539D267E04FC61.Visual.getvalue(categorical, "measurevorlow");
                             measurevormiddle = pb180E482A11328DB4F39A2539D267E04FC61.Visual.getvalue(categorical, "measurevormiddle");
-                            measurevorlow = settings.vor.multiplier ? measurevorlow * 100 : measurevorlow;
-                            measurevormiddle = settings.vor.multiplier ? measurevormiddle * 100 : measurevormiddle;
+                            measurevorlow = settings.insideValue.multiplier ? measurevorlow * 100 : measurevorlow;
+                            measurevormiddle = settings.insideValue.multiplier ? measurevormiddle * 100 : measurevormiddle;
                             measurevorlow = this.formatValue(settings, measurevorlow);
                             measurevormiddle = this.formatValue(settings, measurevormiddle);
                             settings.vor.firstValue = measurevorlow;

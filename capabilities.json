@@ -350,12 +350,6 @@
                     "type": {
                         "numeric": true
                     }
-                },
-                "multiplier": {
-                    "displayName": "VOR Measures Multiplier",
-                    "type": {
-                        "bool": true
-                    }
                 }
             }
         },

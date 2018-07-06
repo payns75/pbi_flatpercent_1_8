@@ -51,7 +51,6 @@ module powerbi.extensibility.visual.pb180E482A11328DB4F39A2539D267E04FC61  {
     public fixedValues: boolean = true;
     public firstValue: number = 25;
     public secondValue: number = 75;
-    public multiplier: boolean = true;
   }
 
   export class LegendSetting {

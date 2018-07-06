@@ -58,16 +58,16 @@ module powerbi.extensibility.visual {
             const radius = this.initContainer(options, settings);
             const arcsize = radius * settings.pie.arcSize / 100;
 
-            value = this.formatValue(settings, value);
             let isvalidvalue = this.isvalidvalue(value);
+            value = this.formatValue(settings, value) | 0;
 
-            if (isvalidvalue && value > 0 && settings.pie.show) {
+            if (settings.pie.show) {
                 const arc = d3.svg.arc()
                     .outerRadius(radius)
                     .innerRadius(radius - arcsize);
 
                 const arc2 = d3.svg.arc()
-                    .outerRadius(radius - arcsize)
+                    .outerRadius(radius - arcsize + 0.8)
                     .innerRadius(radius - arcsize * 2);
 
                 let values = [value > 100 ? 100 : value];
@@ -110,7 +110,12 @@ module powerbi.extensibility.visual {
                 textcolor = this.getVorColor(options.dataViews[0].categorical, settings, value);
             }
 
-            let textValue = isvalidvalue ? `${value}${settings.insideValue.suffix}` : settings.insideValue.nanText;
+            let textValue = settings.insideValue.nanText;
+
+            if (isvalidvalue) {
+                textValue = `${value}${settings.insideValue.suffix}`
+            }
+
             textValue = settings.insideValue.show ? textValue : '';
 
             this.text.data([textValue])
@@ -136,8 +141,8 @@ module powerbi.extensibility.visual {
                 measurevorlow = Visual.getvalue(categorical, "measurevorlow");
                 measurevormiddle = Visual.getvalue(categorical, "measurevormiddle");
 
-                measurevorlow = settings.vor.multiplier ? measurevorlow * 100 : measurevorlow;
-                measurevormiddle = settings.vor.multiplier ? measurevormiddle * 100 : measurevormiddle;
+                measurevorlow = settings.insideValue.multiplier ? measurevorlow * 100 : measurevorlow;
+                measurevormiddle = settings.insideValue.multiplier ? measurevormiddle * 100 : measurevormiddle;
 
                 measurevorlow = this.formatValue(settings, measurevorlow);
                 measurevormiddle = this.formatValue(settings, measurevormiddle);
