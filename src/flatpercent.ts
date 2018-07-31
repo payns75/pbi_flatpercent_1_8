@@ -9,6 +9,7 @@ module powerbi.extensibility.visual {
         private pathback2: d3.Selection<number>;
         private path2: d3.Selection<d3.layout.pie.Arc<number>>;
         private text: d3.Selection<string>;
+        private vormin: d3.Selection<number>;
         private previousvalue: number = null;
         private previousangle = 0;
 
